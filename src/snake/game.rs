@@ -3,8 +3,7 @@ use super::point::Point;
 use super::snake::Snake;
 use rand::{thread_rng, Rng};
 
-const WIDTH: u16 = 10;
-const HEIGHT: u16 = 10;
+pub const SIDE: u16 = 10;
 const SNAKE_START_LEN: u16 = 3;
 
 #[derive(Debug)]
@@ -20,12 +19,12 @@ pub struct Game {
 impl Game {
     pub fn new() -> Self {
         Self {
-            width: WIDTH,
-            height: HEIGHT,
+            width: SIDE,
+            height: SIDE,
             food: None,
             placed_food: false,
             snake: Snake::new(
-                Point::new(WIDTH / 2, HEIGHT / 2),
+                Point::new(SIDE / 2, SIDE / 2),
                 SNAKE_START_LEN,
                 Direction::rand(),
             ),
@@ -47,12 +46,11 @@ impl Game {
             }
         }
 
-        self.snake.direction = slither_towards;
-        println!("Game {:?}", self);
+        self.snake.set_direction(slither_towards);
 
         self.snake.slither();
 
-        if self.has_collided_with_wall() || self.has_bitten_itself() {
+        if self.has_bitten_itself() {
             self.restart();
         } else {
             if let Some(food) = self.food {
@@ -72,8 +70,8 @@ impl Game {
 
     pub fn place_food(&mut self) {
         loop {
-            let random_x = thread_rng().gen_range(1..self.width - 1);
-            let random_y = thread_rng().gen_range(1..self.height - 1);
+            let random_x = thread_rng().gen_range(0..self.width);
+            let random_y = thread_rng().gen_range(0..self.height);
 
             let point = Point::new(random_x, random_y);
 
@@ -84,6 +82,7 @@ impl Game {
         }
     }
 
+    #[allow(dead_code)]
     fn has_collided_with_wall(&self) -> bool {
         let head_point = self.snake.get_head_point();
 
@@ -116,7 +115,7 @@ impl Game {
 
     fn build_snake(&self) -> Snake {
         Snake::new(
-            Point::new(WIDTH / 2, HEIGHT / 2),
+            Point::new(SIDE / 2, SIDE / 2),
             SNAKE_START_LEN,
             Direction::rand(),
         )

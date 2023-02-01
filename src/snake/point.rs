@@ -1,4 +1,5 @@
 use super::directions::Direction;
+use super::game::SIDE;
 
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
 pub struct Point {
@@ -27,13 +28,95 @@ impl Point {
     }
 
     fn transform_value(value: u16, by: i16) -> u16 {
-        if by.is_negative() && by.abs() as u16 > value {
-            panic!(
-                "Transforming value {} by {} would result in a negative number",
-                value, by
-            );
+        if by < 0 {
+            if value == 0 {
+                SIDE - by.abs() as u16
+            } else {
+                value - by.abs() as u16
+            }
         } else {
-            (value as i16 + by) as u16
+            if value + by as u16 == SIDE {
+                0
+            } else {
+                value + by as u16
+            }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rewind_right() {
+        let point: Point = Point::new(9, 5);
+        let transformed = point.transform(Direction::Right, 1);
+
+        assert_eq!(0, transformed.x);
+        assert_eq!(5, transformed.y);
+    }
+
+    #[test]
+    fn transform_right() {
+        let point: Point = Point::new(5, 5);
+        let transformed = point.transform(Direction::Right, 1);
+
+        assert_eq!(6, transformed.x);
+        assert_eq!(5, transformed.y);
+    }
+
+    #[test]
+    fn rewind_down() {
+        let point: Point = Point::new(2, 9);
+        let transformed = point.transform(Direction::Down, 1);
+
+        assert_eq!(2, transformed.x);
+        assert_eq!(0, transformed.y);
+    }
+
+    #[test]
+    fn transform_down() {
+        let point: Point = Point::new(5, 5);
+        let transformed = point.transform(Direction::Down, 1);
+
+        assert_eq!(5, transformed.x);
+        assert_eq!(6, transformed.y);
+    }
+
+    #[test]
+    fn rewind_up() {
+        let point: Point = Point::new(2, 0);
+        let transformed = point.transform(Direction::Up, 1);
+
+        assert_eq!(2, transformed.x);
+        assert_eq!(9, transformed.y);
+    }
+
+    #[test]
+    fn transform_up() {
+        let point: Point = Point::new(5, 5);
+        let transformed = point.transform(Direction::Up, 1);
+
+        assert_eq!(5, transformed.x);
+        assert_eq!(4, transformed.y);
+    }
+
+    #[test]
+    fn rewind_left() {
+        let point: Point = Point::new(0, 5);
+        let transformed = point.transform(Direction::Left, 1);
+
+        assert_eq!(9, transformed.x);
+        assert_eq!(5, transformed.y);
+    }
+
+    #[test]
+    fn transform_left() {
+        let point: Point = Point::new(5, 5);
+        let transformed = point.transform(Direction::Left, 1);
+
+        assert_eq!(4, transformed.x);
+        assert_eq!(5, transformed.y);
     }
 }

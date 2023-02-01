@@ -3,7 +3,7 @@ use std::thread;
 use std::time::Duration;
 use tide::Server;
 
-const SLEEP_FOR_SECS: u64 = 20;
+const SLEEP_FOR_SECS: u64 = 10;
 
 pub fn run(app: &Server<State>) {
     let state = app.state();
