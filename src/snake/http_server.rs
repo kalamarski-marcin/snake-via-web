@@ -2,6 +2,7 @@ use super::ascii_art;
 use super::directions::Direction;
 use super::state::State;
 use tide::log::LogMiddleware;
+use tide::prelude::*;
 use tide::{Request, Response, Result, Server, StatusCode};
 
 pub fn init() -> Server<State> {
@@ -11,7 +12,7 @@ pub fn init() -> Server<State> {
 
     app.with(LogMiddleware::new());
     app.at("/snake").get(req_get_snake);
-    app.at("/snake/:direction").get(req_get_snake_direction);
+    app.at("/snake").post(req_post_snake_direction);
     app
 }
 
@@ -28,10 +29,24 @@ async fn req_get_snake(req: Request<State>) -> Result {
     Ok(response)
 }
 
-async fn req_get_snake_direction(req: Request<State>) -> Result {
+#[derive(Deserialize)]
+#[serde(default)]
+struct Params {
+    direction: String,
+}
+
+impl Default for Params {
+    fn default() -> Self {
+        Self {
+            direction: String::from("up"),
+        }
+    }
+}
+
+async fn req_post_snake_direction(req: Request<State>) -> Result {
     let state = req.state();
-    let param_direction = req.param("direction").unwrap();
-    let direction = match Direction::from_str(param_direction) {
+    let params: Params = req.query()?;
+    let direction = match Direction::from_str(&params.direction) {
         Some(d) => d,
         None => panic!("Not found"),
     };
