@@ -30,16 +30,14 @@ impl Point {
     fn transform_value(value: u16, by: i16) -> u16 {
         if by < 0 {
             if value == 0 {
-                SIDE - by.abs() as u16
+                SIDE - by.unsigned_abs()
             } else {
-                value - by.abs() as u16
+                value - by.unsigned_abs()
             }
+        } else if value + by as u16 == SIDE {
+            0
         } else {
-            if value + by as u16 == SIDE {
-                0
-            } else {
-                value + by as u16
-            }
+            value + by as u16
         }
     }
 }

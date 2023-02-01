@@ -52,13 +52,11 @@ impl Game {
 
         if self.has_bitten_itself() {
             self.restart();
-        } else {
-            if let Some(food) = self.food {
-                if self.snake.get_head_point() == food {
-                    self.snake.grow();
-                    self.place_food();
-                    self.score += 1;
-                }
+        } else if let Some(food) = self.food {
+            if self.snake.get_head_point() == food {
+                self.snake.grow();
+                self.place_food();
+                self.score += 1;
             }
         }
 
@@ -99,7 +97,7 @@ impl Game {
             .snake
             .get_head_point()
             .transform(self.snake.get_direction(), 1);
-        let mut next_body_points = self.snake.get_body_points().clone();
+        let mut next_body_points = self.snake.get_body_points();
         next_body_points.remove(next_body_points.len() - 1);
         next_body_points.remove(0);
 

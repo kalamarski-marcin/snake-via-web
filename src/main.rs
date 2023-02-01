@@ -2,7 +2,7 @@ use genesismobo::snake::http_server;
 use genesismobo::snake::movement_scheduler;
 use tide::Result;
 
-const SERVER_ADDR: &'static str = "127.0.0.1:8080";
+const SERVER_ADDR: &str = "127.0.0.1:8080";
 
 #[async_std::main]
 async fn main() -> Result<()> {

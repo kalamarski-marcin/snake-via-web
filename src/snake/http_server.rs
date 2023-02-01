@@ -54,7 +54,7 @@ async fn req_post_snake_direction(req: Request<State>) -> Result {
     let result = state.directions.clone();
     let mut directions = result.lock().unwrap();
 
-    directions.push(direction.clone());
+    directions.push(direction);
 
     let response = Response::builder(StatusCode::Ok)
         .body(format!(
